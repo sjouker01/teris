@@ -44,7 +44,6 @@ class  TetrisBlock {
         return new TetrisBlock(this.row, this.column, this.color);
     }
 }
-
 class TetrisShape {
     /**@type {string} */
     type; 
@@ -338,5 +337,70 @@ class TetrisGrid {
     
 
 }
+class TetrisBoard {
+     /** @type {number} */
+        rows;
+
+        /** @type {number} */
+        columns;
+    
+        /** @type {HTMLCanvasElement} */
+        canvas;
+    
+        /** @type {CanvasRenderingContext2D} */
+        context;
+    
+        /** @type {boolean} */
+        gameOver;
+    
+        /** @type {TetrisGrid} */
+        grid;
+    
+        /** @type {TetrisShape} */
+        shape;
+
+    constructor(id, rows = 15, columns = 10){
+        this.rows = rows;
+        this.columns = columns;
+        this.blockSize = 40;
+        this.gameOver =false;
+
+
+        this.canvas = document.getElementById(id);
+        this.context =this.canvas.getContext('2d')
+
+        this.grid = new TetrisGrid(this.rows, this.columns);
+        document.addEventListener('keydown', (event) => this.handleKeyDown(event));
+        setInterval(() => this.update(), 1000);
+    }
+
+    update(){
+        this.cleanGrid();
+        this.updateShape();
+        this.draw();
+    }
+    updateShape(){
+        if(this.gameOver){
+            return;
+        }
+        if(!this.shape){
+            const shape = this.createShape();
+            if(!this.grid.canPlace(shape.grid)){
+                this.gameOver = true;
+                return;
+            }
+            this.shape = shape;
+            return;
+        }
+        this.moveShapeDown();
+    }
+
+    draw(){
+        this.context.fillStyle = 'white';
+        this.context.fillRect()
+    }
+}
+
+
 // dit moet ik later aan zetten 
 // const game = new TetrisBoard('tetris-speelveld');
