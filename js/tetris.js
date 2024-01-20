@@ -1,36 +1,49 @@
 
+class  TetrisBlock {
+    /** @type {number}  */
+    row;
+
+    /**@type {number} */
+    column;
 
 
-class Tetris {
+    /**@type {string} */
+    color;
 
     /**
-     * @param {string} type  
-     * @param {number} x
-     * @param {number} y
-     * @todo Check if it can be drawn
-    */
-    constructor(type ,  x , y ){
-        this.type = type;
-        this.x = x;
-        this.y = y;
-    }
-  
-
-    moveDown() {
-        if (this.y <560) {
-            this.y += 40;
-        }
+     * 
+     * @param {number} row
+     * @param {number} column
+     * @param {string} color
+     */
+    constructor(row, column , color){
+        this.row = row;
+        this.column = column;
+        this.color = color;
     }
 
-    moveLeft(){
-        if (this.x >0) {
-            this.x -= 40;
-        }
+    /**
+     * @param {CanvasRenderingContext2D}  context
+     * @param {number} width
+     * @param {number} height
+     */
+    draw(context ,width , height = width){
+        let x = this.column * width;
+        let y = this.row * height;
+
+        context.fillStyle = this.color;
+        context.strokeStyle =  "black";
+
+        context.fillRect(x, y, width , height);
+        context.strokeRect(x, y , width , height);
     }
-    moveRight() {
-        if (this.x < 240){
-            this.x += 40;
-        }
+    /** 
+     * @returns {TetrisBlock}
+     */
+    copy(){
+        return new TetrisBlock(this.row, this.column, this.color);
     }
 }
-    
+
+// dit moet ik later aan zetten 
+// const game = new TetrisBoard('tetris-speelveld');
