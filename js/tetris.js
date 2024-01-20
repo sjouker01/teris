@@ -179,6 +179,164 @@ class TetrisShape {
     }
     
 }
+class TetrisGrid {
+    /**@type {TetrisBlock[]} */
+    blocks;
 
+    constructor(rows , columns){
+        this.rows = rows;
+        this.columns = columns;
+        this.blocks = Array.from(Array(this.rows), () => Array(this.columns));
+    }
+
+    /**
+     * @returns {IterableIterator<TetrisBlock>}
+     */
+    *[Symbol.iterator]() {
+        for (let column = 0; column < this.columns; column++){
+            const block = this.get(row, column);
+            if(block === undefined) continue;
+            yield block;
+        }
+    }
+    /**
+     * @param {number} row
+     * @param {number} column
+     * @returns {boolean}
+     */
+    has(row, column){
+        return this.get(row,column) !==undefined;
+    }
+
+    /**
+     * @param {number} rows
+     * @param {number} column
+     * @returns {TetrisBlock|undefined}
+     */
+    get(row , column){
+       if (row < 0 || row >= this.columns) {
+            return undefined;
+       } 
+       if (column <0 || column >= this.columns){
+            return undefined;
+       }
+       return this.blocks[row][column];
+    }
+
+    /**
+     *  @param {TetrisBlock} block
+     *  @returns {boolean}
+     */
+    set(block) {
+        if(this.has(block.row, block.column)){
+            return false;
+        }
+        this.blocks[block.row][block.column] = block;
+        return true;
+    }
+
+
+    /** 
+     * @param {number} row
+     * @param {number} column
+     * @param {string} color
+     * @returns {TetrisBlock}
+     *  
+    */
+
+    create(row, column, color){
+        const block = new TetrisBlock(row, column , color);
+        this.set(block);
+        return block;
+    }
+
+    /**
+     * @param {TetrisBlock} block
+     * @returns {boolean}
+     */
+    unset(block) {
+        this.blocks[block.row][block.column] = undefined;
+        return true;
+    }
+
+
+    /**
+     * @param {TetrisGrid} grid
+     * @param {number} row
+     * @param {number} column
+     */
+    place(grid, row= 0, column = 0 ){
+        for(let oldBlock of grid){
+            const block = oldBlock.copy();
+            block.row += row;
+            block.column += column;
+            this.set(block);
+        }
+    }
+
+    /**
+     * @param {TetrisGrid} grid
+     * @param {number} row
+     * @param {number} column
+     * @returns {boolean}
+     */
+
+
+    canPlace(grid, row = 0 , column = 0) {
+        for(const block of grid){
+            const placeRow = block.row + row;
+            const placeColumn = block.column + column;
+            if(placeRow < 0 || placeRow >= this.rows) {
+                return undefined;
+            }
+
+            if(placeColumn <0 || placeColumn >= this.columns){
+                return undefined;
+            }
+
+            if(this.has(placeRow, placeColumn)) {
+                return false;
+            }
+           
+        }
+        return true;
+
+    }
+    draw(context , width , height = width) {
+        for(let block of this) {
+            block.draw(context, width, height);
+        }
+    }
+
+    /**
+     * @returns {TetrisGrid}
+     */
+    rotate() {
+        const grid = new TetrisGrid(this.columns, this.rows);
+
+        for(let block of this) {
+            const row = block.column;
+            const column = this.row - block.row -1;
+            grid.create(row , column ,block.color);
+        }
+        return grid;
+    }
+
+    /**
+     * @param {number} row
+     * 
+     */
+    removeRow(row) {
+        this.blocks.splice(row, 1);
+        this.blocks.unshift(Array(this.columns));
+        for(const block of this) {
+            if (block.row < row){
+                block.row += 1;
+            }
+        }
+    }
+    
+
+}
 // dit moet ik later aan zetten 
 // const game = new TetrisBoard('tetris-speelveld');
