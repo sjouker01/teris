@@ -1,0 +1,28 @@
+
+*{margin: 0;
+padding: 0;}
+
+body{
+   display: grid;
+   justify-content: center;
+   align-content: center;
+   height: 100vh;
+   background-color: black;
+}
+
+#terisBackground {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    background-color: dimgray;
+    border: 2px solid #fff;
+}
+
+
+#terisBackground1 {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    background-color: dimgray;
+    border: 2px solid #fff;
+}
