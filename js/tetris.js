@@ -409,7 +409,20 @@ class TetrisBoard {
             this.context.save();
             this.context.fillStyle = "black";
             this.context.font = '48px serif';
-            this.context.textBaseline = 'm'
+            this.context.textBaseline = 'middle';
+            this.context.textAlign = 'center';
+
+            const x = this.canvas.width /2;
+            const y = this.canvas.height /2;
+            this.context.fillText('game over', x, y);
+            this.context.restore();
+        }
+    }
+
+
+    moveShapeDown() {
+        if(!this.shape){
+            return;
         }
     }
 }
