@@ -397,7 +397,20 @@ class TetrisBoard {
 
     draw(){
         this.context.fillStyle = 'white';
-        this.context.fillRect()
+        this.context.fillRect(0,0, this.canvas.width, this.canvas.height);
+
+        this.grid.draw(this.context, this.blockSize);
+
+        if(this.shape){
+            this.shape.draw(this.context, this.blockSize);
+        }
+
+        if(this.gameOver){
+            this.context.save();
+            this.context.fillStyle = "black";
+            this.context.font = '48px serif';
+            this.context.textBaseline = 'm'
+        }
     }
 }
 
