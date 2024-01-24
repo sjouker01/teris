@@ -525,7 +525,101 @@ class TetrisBoard {
     }
     
 }
+class TetrisGame {
 
+    /** @type {string} */
+    containerid;
+
+    /**@type {HTMLElement} */
+    container;
+    /** @type {HTMLCanvasElement} */
+    canvas;
+    /**@type {CanvasRenderingContext2D} */
+    context;
+    /** @type {TetrisBoard | undefined} */
+    board;
+
+    constructor(containerid) {
+        this.containerid = containerid;
+        this.container = document.getElementById(containerid);
+        this.canvas = document.createElement('canvas');
+        this.container.appendChild(this.canvas);
+        this.resize();
+
+        window.addEventListener('resize', () => this.resize());
+        document.addEventListener('keydown', (event) => this.handleKeyDown(event));
+    }
+
+    resize(){
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        this.canvas.width = width;
+        this.canvas.height = height;
+    }
+    /**
+     * @param {event} event
+     */
+    handleUpdate(event){
+
+    }
+    /**
+     * @param {keyboardEvent} event
+     */
+    handleKeyDown(event) {
+        switch(event.key) {
+            case 'ArrowLeft':
+            case 'A':
+                this.moveShape(0, -1);
+                break;
+            case 'ArrowRight':
+            case 'D':
+                this.moveShape(0, 1);
+                break;
+            case 'ArrowDown':
+            case 'S':
+                this.moveShapeDown();
+                break;
+            case 'ArrowUp':
+            case 'W':
+            case 'Space':
+                this.rotateShape();
+                break;
+            default:
+                return;
+        }
+
+        this.draw();
+    }
+
+    rotateShape() {
+        if(this.gameOver){
+            return false;
+        }
+        if(this.shape === undefined){
+            return false;
+        }
+        if(!this.shape.canRotateOn(this.grid)){
+            return false;
+        }
+        this.shape.rotate();
+        return true;
+    }
+
+
+    /**
+     * @return {TetrisShape}
+     */
+
+    createShape() {
+        const types = Object.keys(TETRIS_SHAPE_TYPES);
+        const type = types[Math.floor(Math.random()* types.length)];
+
+
+        return new TetrisShape(type, 0, 0);
+    }
+
+}
 
 // dit moet ik later aan zetten 
 // const game = new TetrisBoard('tetris-speelveld');
