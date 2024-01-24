@@ -424,6 +424,19 @@ class TetrisBoard {
         if(!this.shape){
             return;
         }
+        const hasMoved= this.moveShape(1,0);
+
+        if(!hasMoved) {
+            this.shape.PlaceOn(this.grid);
+            this.shape = undefined;
+        }
+    }
+
+
+    cleanGrid(){
+        for(let row = 0; ro < this.rows; row++){
+            
+        }
     }
 }
 
