@@ -435,9 +435,95 @@ class TetrisBoard {
 
     cleanGrid(){
         for(let row = 0; ro < this.rows; row++){
-            
+            let full =  true;
+            for(let column = 0; column <this.columns; column++){
+                if(!this.grid.has(row, column)){
+                    full = false;
+                }
+            }
+
+            if(full){
+                this.grid.removeRow(row);
+            }
         }
     }
+
+
+
+    /**
+     * @param {number} rows
+     * @param {number} color
+     * @returns {boolean}
+     */
+    moveShape(rows = 0 , columns = 0){
+        if(this.gameOver){
+            return false;
+        }
+        if(this.shape === undefined){
+            return false;
+        }
+        if(!this.shape.canPlaceOn(this.grid, rows , columns)) {
+            return false;
+        }
+
+        this.shape.move(rows, columns);
+        return true;
+    }
+
+    /**
+     * @param {keyboardEvent} event
+     */
+    handleKeyDown(event){
+        switch(event.key){
+            case 'ArrowLeft':
+            case 'A':
+                this.moveShape(0, -1);
+                break;
+            case 'ArrowRight':
+            case 'D':
+                this.moveShape(0,1);
+                break;
+            case 'ArrowDown':
+            case 'S':
+                this.moveShapeDown();
+                break;
+            case 'ArrowUp':
+            case 'W':
+            case 'space':
+                this.rotateShape();
+                break;
+            default:
+                return;
+        }
+        this.draw();
+    }
+
+    rotateShape() {
+        if(this.gameOver){
+            return false;
+        }
+        if(this.shape === undefined){
+            return false;
+        }
+
+        if(!this.shape.canRotateOn(this.grid)){
+            return false;
+        }
+
+        this.shape.rotate();
+        return true;
+    }
+
+
+    /**
+     * @returns {TetrisShape}
+     */
+    createShape(){
+        const types = Object.keys(TETRIS_SHAPE_TYPES);
+        const type =  types[Math.floor(Math.random() * types.length)];
+        return new TetrisShape(type , 0 , 0);   
+    }
+    
 }
 
 
