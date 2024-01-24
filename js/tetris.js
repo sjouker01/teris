@@ -44,7 +44,6 @@ class  TetrisBlock {
         return new TetrisBlock(this.row, this.column, this.color);
     }
 }
-
 class TetrisShape {
     /**@type {string} */
     type; 
@@ -338,5 +337,195 @@ class TetrisGrid {
     
 
 }
+class TetrisBoard {
+     /** @type {number} */
+        rows;
+
+        /** @type {number} */
+        columns;
+    
+        /** @type {HTMLCanvasElement} */
+        canvas;
+    
+        /** @type {CanvasRenderingContext2D} */
+        context;
+    
+        /** @type {boolean} */
+        gameOver;
+    
+        /** @type {TetrisGrid} */
+        grid;
+    
+        /** @type {TetrisShape} */
+        shape;
+
+    constructor(id, rows = 15, columns = 10){
+        this.rows = rows;
+        this.columns = columns;
+        this.blockSize = 40;
+        this.gameOver =false;
+
+
+        this.canvas = document.getElementById(id);
+        this.context =this.canvas.getContext('2d')
+
+        this.grid = new TetrisGrid(this.rows, this.columns);
+        document.addEventListener('keydown', (event) => this.handleKeyDown(event));
+        setInterval(() => this.update(), 1000);
+    }
+
+    update(){
+        this.cleanGrid();
+        this.updateShape();
+        this.draw();
+    }
+    updateShape(){
+        if(this.gameOver){
+            return;
+        }
+        if(!this.shape){
+            const shape = this.createShape();
+            if(!this.grid.canPlace(shape.grid)){
+                this.gameOver = true;
+                return;
+            }
+            this.shape = shape;
+            return;
+        }
+        this.moveShapeDown();
+    }
+
+    draw(){
+        this.context.fillStyle = 'white';
+        this.context.fillRect(0,0, this.canvas.width, this.canvas.height);
+
+        this.grid.draw(this.context, this.blockSize);
+
+        if(this.shape){
+            this.shape.draw(this.context, this.blockSize);
+        }
+
+        if(this.gameOver){
+            this.context.save();
+            this.context.fillStyle = "black";
+            this.context.font = '48px serif';
+            this.context.textBaseline = 'middle';
+            this.context.textAlign = 'center';
+
+            const x = this.canvas.width /2;
+            const y = this.canvas.height /2;
+            this.context.fillText('game over', x, y);
+            this.context.restore();
+        }
+    }
+
+
+    moveShapeDown() {
+        if(!this.shape){
+            return;
+        }
+        const hasMoved= this.moveShape(1,0);
+
+        if(!hasMoved) {
+            this.shape.PlaceOn(this.grid);
+            this.shape = undefined;
+        }
+    }
+
+
+    cleanGrid(){
+        for(let row = 0; ro < this.rows; row++){
+            let full =  true;
+            for(let column = 0; column <this.columns; column++){
+                if(!this.grid.has(row, column)){
+                    full = false;
+                }
+            }
+
+            if(full){
+                this.grid.removeRow(row);
+            }
+        }
+    }
+
+
+
+    /**
+     * @param {number} rows
+     * @param {number} color
+     * @returns {boolean}
+     */
+    moveShape(rows = 0 , columns = 0){
+        if(this.gameOver){
+            return false;
+        }
+        if(this.shape === undefined){
+            return false;
+        }
+        if(!this.shape.canPlaceOn(this.grid, rows , columns)) {
+            return false;
+        }
+
+        this.shape.move(rows, columns);
+        return true;
+    }
+
+    /**
+     * @param {keyboardEvent} event
+     */
+    handleKeyDown(event){
+        switch(event.key){
+            case 'ArrowLeft':
+            case 'A':
+                this.moveShape(0, -1);
+                break;
+            case 'ArrowRight':
+            case 'D':
+                this.moveShape(0,1);
+                break;
+            case 'ArrowDown':
+            case 'S':
+                this.moveShapeDown();
+                break;
+            case 'ArrowUp':
+            case 'W':
+            case 'space':
+                this.rotateShape();
+                break;
+            default:
+                return;
+        }
+        this.draw();
+    }
+
+    rotateShape() {
+        if(this.gameOver){
+            return false;
+        }
+        if(this.shape === undefined){
+            return false;
+        }
+
+        if(!this.shape.canRotateOn(this.grid)){
+            return false;
+        }
+
+        this.shape.rotate();
+        return true;
+    }
+
+
+    /**
+     * @returns {TetrisShape}
+     */
+    createShape(){
+        const types = Object.keys(TETRIS_SHAPE_TYPES);
+        const type =  types[Math.floor(Math.random() * types.length)];
+        return new TetrisShape(type , 0 , 0);   
+    }
+    
+}
+
+
 // dit moet ik later aan zetten 
 // const game = new TetrisBoard('tetris-speelveld');
