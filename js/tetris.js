@@ -24,10 +24,18 @@ class TetrisGame {
     /** @type {TetrisBoard | undefined} */
     board;
 
-    constructor(containerId) {
+    constructor(containerId, buttonEllement) {
         this.containerId = containerId;
         this.container = document.getElementById(containerId);
+        this.buttonEllement = document.getElementById(buttonEllement);
+        this.isPauzed = false;
+        this.gameLoop = null;
         
+        if (this.buttonEllement) {
+            this.buttonEllement.addEventListener('click' , () => this.togglePauze());
+        } else {
+            console.error(`Button element with id ${buttonEllement} not found`);
+        }
         if (this.container) {
             this.canvas = document.createElement('canvas');
             this.canvas.id = 'terisBackground1';
@@ -51,12 +59,31 @@ class TetrisGame {
         this.canvas.height = height;
     }
 
-    /**
-     * 
-     * @param {Event} event
-     */
-    handleUpdate(event) {
+
+    startGame() {
+        this.gameLoop = setInterval(() => {
+
+        }, 1000);
     }
+
+    stopGame() {
+        clearInterval(this.gameLoop);
+        this.gameLoop =null;
+    }
+
+
+    togglePauze(){
+        this.isPauzed = !this.isPauzed;
+        this.buttonEllement.textContent = this.isPauzed ? 'Hervat': 'Pauze';
+
+        if (this.isPauzed){
+            this.stopGame();
+        } else {
+            this.startGame();
+        }
+    }
+
+
 
     /**
      * 
@@ -64,18 +91,22 @@ class TetrisGame {
      */
     handleKeyDown(event) {
         switch(event.key) {
+            case 'a':
             case 'ArrowLeft':
             case 'A':
                 this.moveShape(0, -1);
                 break;
+            case 'd':
             case 'ArrowRight':
             case 'D':
                 this.moveShape(0, 1);
                 break;
+            case 's':    
             case 'ArrowDown':
             case 'S':
                 this.moveShapeDown();
                 break;
+            case 'w':    
             case 'ArrowUp':
             case 'W':
             case 'Space':
@@ -692,4 +723,10 @@ class TetrisBlock {
     }
 }
 
+
+
 const game = new TetrisBoard('terisBackground1');
+
+
+const game1 = new TetrisGame(document.getElementById('pauseButton'));
+game.startGame();
